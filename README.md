@@ -6,7 +6,7 @@ An interactive web app built with threejs, mediapipe computer vision, web speech
 
 - Say "drag", "rotate", "scale", or "animate" to change the interaction mode
 - Pinch fingers to control the 3D model
-- Drag/drop a new 3D model onto the page to import it (GLTF format only for now)
+- Drag/drop or import a new 3D model (.gltf or .glb) onto the page to import it
 
 [Video](https://x.com/measure_plan/status/1929900748235550912) | [Live Demo](https://collidingscopes.github.io/3d-model-playground/)
 
@@ -32,11 +32,19 @@ git clone https://github.com/collidingScopes/3d-model-playground
 # Navigate to the project directory
 cd 3d-model-playground
 
-# Serve with your preferred method (example using Python)
+# Install dependencies
+npm install
+
+# Start the dev server (uses vite)
+npm run dev
+
+# Or serve with your preferred method (example using Python)
 python -m http.server
 ```
 
-Then navigate to `http://localhost:8000` in your browser.
+Then navigate to `http://localhost:8000` or the port printed by `npm run dev` in your browser.
+
+Vite handles the dev/preview server, so any scripts such as `npm run dev` or `npm run preview` rely on it.
 
 ## License
 

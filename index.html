@@ -24,12 +24,11 @@
         <meta property="twitter:description" content="Control 3D models with hand gestures & voice commands">
         <meta property="twitter:image" content="https://raw.githubusercontent.com/collidingScopes/3d-model-playground/main/assets/siteOGImage.jpg">
 
-        <script defer src="https://cloud.umami.is/script.js" data-website-id="eb59c81c-27cb-4e1d-9e8c-bfbe70c48cd9"></script>
         <script type="importmap">
             {
                 "imports": {
                     "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
-                    "three/examples/": "https://unpkg.com/three@0.161.0/examples/jsm/",
+                    "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/",
                     "three/loaders/": "https://unpkg.com/three@0.161.0/examples/jsm/loaders/"
                 }
             }
@@ -38,18 +37,7 @@
     <body style="width: 100%; height: 100%; overflow: hidden; margin: 0;">
         <div id="renderDiv" style="width: 100%; height: 100%; margin: 0;">
             <div id="instruction-text" class="text-box"></div>
-            <div id="video-link" class="text-box">
-                <a href="https://x.com/measure_plan/status/1929900748235550912" target="_blank">Video Demo</a>
-            </div>
-            <div id="social-links" class="text-box">
-                <a href="https://www.x.com/measure_plan/" target="_blank">Twitter</a><br>
-                <a href="https://www.instagram.com/stereo.drift/" target="_blank">Instagram</a>
-            </div>
-            <div id="coffee-link" class="text-box">
-                <a href="https://buymeacoffee.com/stereodrift" target="_blank">Buy me a coffee 💛</a>
-            </div>
         </div>
         <script type="module" src="main.js"></script>
-
     </body>
 </html>

@@ -218,6 +218,9 @@ export var Game = /*#__PURE__*/ function() {
         this.speechManager = null;
         this.speechBubble = null;
         this.speechBubbleTimeout = null;
+        this.openAIApiKey = window.OPENAI_API_KEY || null;
+        this.importInput = null;
+        this.importButton = null;
         this.isSpeechActive = false; // Track if speech recognition is active for styling
         this.grabbingHandIndex = -1; // -1: no hand, 0: first hand, 1: second hand grabbing
         this.pickedUpModel = null; // Reference to the model being dragged
@@ -395,6 +398,36 @@ export var Game = /*#__PURE__*/ function() {
                 this.speechBubble.style.pointerEvents = 'none'; // Not interactive
                 this.speechBubble.innerHTML = "..."; // Default text
                 this.renderDiv.appendChild(this.speechBubble);
+                // Import button and file input
+                this.importInput = document.createElement("input");
+                this.importInput.type = "file";
+                this.importInput.accept = ".gltf,.glb,model/gltf+json,model/gltf-binary";
+                this.importInput.style.display = "none";
+                this.importInput.addEventListener("change", function(event) {
+                    if (event.target.files && event.target.files[0]) {
+                        _this._loadDroppedModel(event.target.files[0]);
+                        event.target.value = "";
+                    }
+                });
+                this.importButton = document.createElement("button");
+                this.importButton.innerText = "Import Model";
+                this.importButton.style.position = "absolute";
+                this.importButton.style.top = "60px";
+                this.importButton.style.left = "50%";
+                this.importButton.style.transform = "translateX(-50%)";
+                this.importButton.style.zIndex = "30";
+                this.importButton.style.padding = "12px 24px";
+                this.importButton.style.fontSize = "20px";
+                this.importButton.style.border = "2px solid black";
+                this.importButton.style.borderRadius = "4px";
+                this.importButton.style.cursor = "pointer";
+                this.importButton.style.background = "white";
+                this.importButton.style.boxShadow = "2px 2px 0px black";
+                this.importButton.addEventListener("click", function() {
+                    return _this.importInput.click();
+                });
+                this.renderDiv.appendChild(this.importButton);
+                this.renderDiv.appendChild(this.importInput);
                 // Animation buttons container
                 this.animationButtonsContainer = document.createElement('div');
                 this.animationButtonsContainer.id = 'animation-buttons-container';
@@ -432,8 +465,8 @@ export var Game = /*#__PURE__*/ function() {
                     var button = document.createElement('button');
                     button.innerText = mode;
                     button.id = "interaction-mode-".concat(mode.toLowerCase());
-                    button.style.padding = '10px 22px'; // Increased padding
-                    button.style.fontSize = '18px'; // Increased font size further
+                    button.style.padding = '16px 28px'; // Increased padding
+                    button.style.fontSize = 'clamp(22px, 4vw, 32px)'; // Increased font size further
                     button.style.border = '2px solid black'; // Consistent black border
                     button.style.borderRadius = '4px'; // Sharper corners
                     button.style.cursor = 'pointer';
@@ -1517,6 +1550,9 @@ export var Game = /*#__PURE__*/ function() {
                         if (finalTranscript) {
                             _this.speechBubble.innerHTML = finalTranscript;
                             _this.speechBubble.style.opacity = '1';
+                            _this._sendAIMessage(finalTranscript).then(function(reply){
+                                _this.speechBubble.innerHTML = reply;
+                            }).catch(function(err){ console.error("AI error", err); });
                             _this.speechBubbleTimeout = setTimeout(function() {
                                 _this.speechBubble.innerHTML = "...";
                                 _this.speechBubble.style.opacity = '0.7';
@@ -1596,6 +1632,31 @@ export var Game = /*#__PURE__*/ function() {
                     // Active button has its shadow "pressed"
                     button.style.boxShadow = isActive ? '1px 1px 0px black' : '2px 2px 0px black';
                 }
+            }
+        },
+        {
+            key: "_sendAIMessage",
+            value: function _sendAIMessage(message) {
+                if (!this.openAIApiKey) {
+                    return Promise.resolve("(AI API key not set)");
+                }
+                return fetch("https://api.openai.com/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + this.openAIApiKey
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-3.5-turbo",
+                        messages: [{ role: "user", content: message }]
+                    })
+                }).then(function(res){ return res.json(); }).then(function(data){
+                    if (data && data.choices && data.choices[0] && data.choices[0].message) {
+                        return data.choices[0].message.content.trim();
+                    } else {
+                        throw new Error("Invalid AI response");
+                    }
+                });
             }
         },
         {
